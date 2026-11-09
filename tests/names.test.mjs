@@ -56,6 +56,27 @@ test("a tab someone else named is never touched, and forgotten", () => {
   assert.deepEqual(fresh.renames, []);
 });
 
+test("a tab named after its agent program is Herdr's default and is taken", () => {
+  const CODEX = { key: "codex", name: "Codex", agent: true };
+  const r = plan(
+    [tab("a", "Claude Code", true), tab("b", "Codex", true), tab("c", "claude", true)],
+    [pane("a", "Fix login"), pane("b", "Add tests", CODEX), pane("c", "Write docs")],
+    {},
+  );
+  assert.deepEqual(r.renames, [
+    { id: "a", name: "Fix login" },
+    { id: "b", name: "Add tests" },
+    { id: "c", name: "Write docs" },
+  ]);
+  assert.deepEqual(r.owned, { a: ["Claude Code", "Fix login"], b: ["Codex", "Add tests"], c: ["claude", "Write docs"] });
+});
+
+test("a program name is only a default for a tab running that program", () => {
+  const r = plan([tab("a", "Codex", true), tab("b", "Claude Code", true)], [pane("a", "Fix login"), pane("b", "~/src", ZSH)], {});
+  assert.deepEqual(r.renames, []);
+  assert.deepEqual(r.owned, {});
+});
+
 test("a tab reset to its number is taken again", () => {
   const r = plan([tab("a", "1")], [pane("a", "Fix login")], {});
   assert.deepEqual(r.renames, [{ id: "a", name: "Fix login" }]);

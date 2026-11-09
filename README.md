@@ -14,7 +14,9 @@ title, `Herdr file-open mod`, where it used to show `2`.
 - When the agent exits, the tab keeps the last name.
 - **A name you give a tab is yours.** If you rename a tab (double-click or
   `tab.rename`), the mod never touches it again. Renaming it to `""` (back to
-  its number) hands it back to the mod.
+  its number) hands it back to the mod. A tab named after the agent program
+  running in it (`Claude Code`, `Codex`, the name Herdr gives a new agent
+  tab) counts as unnamed.
 - Tabs on a machine whose layout is unavailable are left alone until it is
   back.
 

@@ -16,14 +16,19 @@ export function telling(pane) {
 
 // tabs: TabInfo[] of machines whose layout is ready; panes: panes(); owned: {tabId: [names]},
 // the names this mod gave each tab (two while a rename is in flight). A tab someone else
-// named keeps its name for good; one nobody named, or one we named, follows the title of
-// its first agent pane that has a telling one.
+// named keeps its name for good; one nobody named, one named after an agent program in it
+// (Herdr's default, "Claude Code"), or one we named, follows the title of its first agent
+// pane that has a telling one.
 // Returns the renames to run and the new `owned`; with keep, entries for tabs not in
 // `tabs` are carried over (their machine may just be unavailable).
 export function plan(tabs, panes, owned, { keep = false } = {}) {
   const titles = new Map();
+  const programs = new Map(); // tab id -> lowercased names and keys of its agent programs
   for (const p of panes) {
-    if (titles.has(p.tab) || !p.terminal || !(p.program?.agent || p.status)) continue;
+    if (!p.terminal || !(p.program?.agent || p.status)) continue;
+    if (!programs.has(p.tab)) programs.set(p.tab, new Set());
+    for (const n of [p.program?.name, p.program?.key]) if (n) programs.get(p.tab).add(n.toLowerCase());
+    if (titles.has(p.tab)) continue;
     const title = telling(p);
     if (title) titles.set(p.tab, title);
   }
@@ -33,7 +38,8 @@ export function plan(tabs, panes, owned, { keep = false } = {}) {
   for (const tab of tabs) {
     delete next[tab.id];
     const ours = owned[tab.id] ?? [];
-    if (tab.named && !ours.includes(tab.name)) continue;
+    const programName = programs.get(tab.id)?.has(tab.name.toLowerCase());
+    if (tab.named && !ours.includes(tab.name) && !programName) continue;
     const title = titles.get(tab.id);
     if (title && title !== tab.name) {
       renames.push({ id: tab.id, name: title });

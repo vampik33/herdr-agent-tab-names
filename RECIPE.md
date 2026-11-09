@@ -17,6 +17,7 @@ This file is the brief: enough to build Agent tab names from an empty folder. Th
 - A tab nobody named takes the title of its first agent pane, in `panes()` order, whose title is useful. A title is not useful when it is empty, equals the program's name (`Claude Code`) or key (`claude`), is a path (`~/…`, `/…`, `C:\…`, checked before glyphs are stripped) or contains `@` (a shell's `user@host`).
 - A tab the mod named follows the title as it changes, checked every 1000 ms.
 - A tab someone else named (double-click, `tab.rename`, `tab.new {name}`) is never renamed. Renaming it to `""` gives it back its number, and the mod takes it again.
+- A tab whose name equals the name or key (any case) of an agent program running in it (`Claude Code`, `Codex`, Herdr's default name for a new agent tab) is treated as unnamed and takes the title.
 - When the agent exits or the pane becomes a shell, the tab keeps its last name.
 - Mod panes and shells never name a tab.
 - Tabs on a machine whose `machines()` layout is not `ready` are skipped until it is.
